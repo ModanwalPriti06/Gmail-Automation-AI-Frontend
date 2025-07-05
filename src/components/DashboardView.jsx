@@ -10,14 +10,21 @@ export default function DashboardView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [followUpRes, meetingRes, draftRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/email/followups"),
-        //   axios.get("http://localhost:5000/api/email/meetings"),
-        //   axios.get("http://localhost:5000/api/email/draft-email"),
-        ]);
+     const token = localStorage.getItem("token");
+
+      const [followUpRes, meetingRes, draftRes] = await Promise.all([
+        axios.get("http://localhost:5000/api/email/followups", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        // Add more calls here when needed:
+        // axios.get("http://localhost:5000/api/email/meetings", { headers: { Authorization: `Bearer ${token}` } }),
+        // axios.get("http://localhost:5000/api/email/draft-email", { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
         setFollowUps(followUpRes.data || []);
-        setMeetings(meetingRes.data || []);
-        setDrafts(draftRes.data || []);
+        // setMeetings(meetingRes.data || []);
+        // setDrafts(draftRes.data || []);
       } catch (err) {
         console.error("Error loading dashboard data", err);
       }

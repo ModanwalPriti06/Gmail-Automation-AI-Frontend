@@ -1,8 +1,10 @@
 // MCPFrontend.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function MCPFrontend() {
+  const navigate = useNavigate();
   const [thread, setThread] = useState("");
   const [intent, setIntent] = useState("");
   const [tone, setTone] = useState("polite");
@@ -54,7 +56,14 @@ export default function MCPFrontend() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">MCP Email Copilot</h1>
+      <div className="flex justify-start">
+      <h1 className="text-2xl font-bold px-5">MCP Email Copilot</h1>
+        <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+         onClick={()=>navigate('/dashboard')}
+        >
+          MCP Dashboard
+        </button>
+      </div>
 
       <textarea
         placeholder="Paste email thread here..."
@@ -110,14 +119,14 @@ export default function MCPFrontend() {
 
         <button
           onClick={handleFollowUp}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 opacity-50 cursor-not-allowed"
         >
           Schedule Follow-Up
         </button>
 
         <button
           onClick={handleMeetingSchedule}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 opacity-50 cursor-not-allowed"
         >
           Auto-Schedule Meeting
         </button>
