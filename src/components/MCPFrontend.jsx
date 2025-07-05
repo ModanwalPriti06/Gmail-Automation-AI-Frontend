@@ -2,9 +2,16 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 export default function MCPFrontend() {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [thread, setThread] = useState("");
   const [intent, setIntent] = useState("");
   const [tone, setTone] = useState("polite");
@@ -14,6 +21,16 @@ export default function MCPFrontend() {
   const [loading, setLoading] = useState(false);
   const [meetingInfo, setMeetingInfo] = useState({});
   const [followUpResponse, setFollowUpResponse] = useState(null);
+
+
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  // auto scheduling meeting
+
+  const [to, setTo] = useState('');
+  const [sub, setSub] = useState('');
+  const [body, setBody] = useState('');
+  const [modal, setModal] = useState(false);
 
   const handleDraft = async () => {
     setLoading(true);
@@ -34,14 +51,21 @@ export default function MCPFrontend() {
 
   const handleMeetingSchedule = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/email/schedule-meeting", {
-        thread,
-      });
+      const obj = {
+        to: to,
+        subject: sub,
+        body: body
+      }
+      const res = await axios.post("http://localhost:5000/api/email/schedule-meeting", obj);
       setMeetingInfo(res.data);
     } catch (err) {
       alert("Meeting scheduling failed");
     }
   };
+
+  const openModal= ()=>{
+    setModal(true);
+  }
 
   const handleFollowUp = async () => {
     try {
@@ -108,6 +132,54 @@ export default function MCPFrontend() {
         <option value="urgent">Urgent</option>
       </select>
 
+      {/* Dialog Auto scheduling meeting */}
+       <Dialog
+        fullScreen={fullScreen}
+        open={modal}
+        onClose={()=>setModal(false)}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">
+          Auto Scheduling Meeting Calendar
+        </DialogTitle>
+        <DialogContent>
+          
+      {/* auto scheduling */}
+        <input
+          type="text"
+          placeholder="To:"
+          className="w-full border p-3 rounded m-2"
+          value={to}
+          onChange={(e) => setTo(e.target.value)}
+        />
+
+      <input
+          type="text"
+          placeholder="Subject"
+          className="w-full border p-3 rounded m-2"
+          value={sub}
+          onChange={(e) => setSub(e.target.value)}
+        />
+
+      <input
+          type="text"
+          placeholder="Body"
+          className="w-full border p-3 rounded m-2"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+        />
+
+        </DialogContent>
+        <DialogActions>
+          <button autoFocus onClick={()=>setModal(false)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+            Cancel
+          </button>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={handleMeetingSchedule} autoFocus>
+            Submit
+          </button>
+        </DialogActions>
+      </Dialog>
+  
       <div className="flex gap-3">
         <button
           onClick={handleDraft}
@@ -125,8 +197,8 @@ export default function MCPFrontend() {
         </button>
 
         <button
-          onClick={handleMeetingSchedule}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 opacity-50 cursor-not-allowed"
+          onClick={openModal}
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
         >
           Auto-Schedule Meeting
         </button>
