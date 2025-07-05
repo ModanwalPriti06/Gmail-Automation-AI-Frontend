@@ -10,6 +10,8 @@ export default function MCPFrontend() {
   const [style, setStyle] = useState("");
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
+  const [meetingInfo, setMeetingInfo] = useState({});
+  const [followUpResponse, setFollowUpResponse] = useState(null);
 
   const handleDraft = async () => {
     setLoading(true);
@@ -26,6 +28,28 @@ export default function MCPFrontend() {
       alert("Error generating draft");
     }
     setLoading(false);
+  };
+
+  const handleMeetingSchedule = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/email/schedule-meeting", {
+        thread,
+      });
+      setMeetingInfo(res.data);
+    } catch (err) {
+      alert("Meeting scheduling failed");
+    }
+  };
+
+  const handleFollowUp = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/email/follow-up-schedule", {
+        thread,
+      });
+      setFollowUpResponse(res.data);
+    } catch (err) {
+      alert("Follow-up scheduling failed");
+    }
   };
 
   return (
@@ -75,18 +99,50 @@ export default function MCPFrontend() {
         <option value="urgent">Urgent</option>
       </select>
 
-      <button
-        onClick={handleDraft}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        disabled={loading}
-      >
-        {loading ? "Generating..." : "Generate Draft"}
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={handleDraft}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          disabled={loading}
+        >
+          {loading ? "Generating..." : "Generate Draft"}
+        </button>
+
+        <button
+          onClick={handleFollowUp}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Schedule Follow-Up
+        </button>
+
+        <button
+          onClick={handleMeetingSchedule}
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+        >
+          Auto-Schedule Meeting
+        </button>
+      </div>
 
       {draft && (
         <div className="mt-6">
           <h2 className="text-lg font-semibold mb-2">Generated Draft:</h2>
           <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap">{draft}</pre>
+        </div>
+      )}
+
+      {followUpResponse && (
+        <div className="mt-6 bg-green-50 p-4 rounded">
+          <h2 className="text-lg font-semibold">Follow-Up Scheduled</h2>
+          <pre className="whitespace-pre-wrap">{JSON.stringify(followUpResponse, null, 2)}</pre>
+        </div>
+      )}
+
+      {meetingInfo.link && (
+        <div className="mt-6 bg-purple-50 p-4 rounded">
+          <h2 className="text-lg font-semibold">Meeting Scheduled</h2>
+          <p><strong>Link:</strong> <a href={meetingInfo.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{meetingInfo.link}</a></p>
+          <p><strong>Time:</strong> {meetingInfo.time}</p>
+          <p><strong>Agenda:</strong> {meetingInfo.agenda}</p>
         </div>
       )}
     </div>
