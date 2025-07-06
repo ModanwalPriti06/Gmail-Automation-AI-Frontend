@@ -51,12 +51,12 @@ export default function MCPFrontend() {
 
   const handleMeetingSchedule = async () => {
     try {
-      const obj = {
-        to: to,
-        subject: sub,
-        body: body
-      }
-      setModal(true);
+        setModal(false);
+        const obj = {
+          to: to,
+          subject: sub,
+          body: body
+        }
       const res = await axios.post("http://localhost:5000/api/email/schedule-meeting", obj);
       setMeetingInfo(res.data);
     } catch (err) {
