@@ -220,6 +220,16 @@ Response
 35. Complete frontend part.
 
 
+<img width="1713" alt="mcp1" src="https://github.com/user-attachments/assets/84464556-16c1-4427-92b0-ce010ed0ef27" />
+
+<img width="1481" alt="mcp2" src="https://github.com/user-attachments/assets/21d80660-aa8c-44b3-9301-145e55253d5a" />
+
+<img width="1743" alt="mcp3" src="https://github.com/user-attachments/assets/219471e9-1e83-4ff0-a175-f8d184f9e105" />
+
+
+
+
+
 
 
 
